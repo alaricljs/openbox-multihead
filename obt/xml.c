@@ -304,6 +304,45 @@ gboolean obt_xml_load_mem(ObtXmlInst *i,
     return r;
 }
 
+static void obt_xml_save_last_error(ObtXmlInst* inst)
+{
+    xmlErrorPtr error = xmlGetLastError();
+    if (error) {
+        inst->last_error_file = g_strdup(error->file);
+        inst->last_error_line = error->line;
+        inst->last_error_message = g_strdup(error->message);
+        xmlResetError(error);
+    }
+}
+
+gboolean obt_xml_last_error(ObtXmlInst *inst)
+{
+    return inst->last_error_file &&
+        inst->last_error_line >= 0 &&
+        inst->last_error_message;
+}
+
+gchar* obt_xml_last_error_file(ObtXmlInst *inst)
+{
+    if (!obt_xml_last_error(inst))
+        return NULL;
+    return inst->last_error_file;
+}
+
+gint obt_xml_last_error_line(ObtXmlInst *inst)
+{
+    if (!obt_xml_last_error(inst))
+        return -1;
+    return inst->last_error_line;
+}
+
+gchar* obt_xml_last_error_message(ObtXmlInst *inst)
+{
+    if (!obt_xml_last_error(inst))
+        return NULL;
+    return inst->last_error_message;
+}
+
 gboolean obt_xml_save_file(ObtXmlInst *inst,
                            const gchar *path,
                            gboolean pretty)
