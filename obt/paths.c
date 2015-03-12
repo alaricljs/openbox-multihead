@@ -88,8 +88,10 @@ static GSList* split_paths(const gchar *paths)
     if (!paths)
         return NULL;
     spl = g_strsplit(paths, ":", -1);
-    for (it = spl; *it; ++it)
-        list = slist_path_add(list, *it, (GSListFunc) g_slist_append);
+    for (it = spl; *it; ++it) {
+        if ((*it)[0]) /* skip empty strings */
+            list = slist_path_add(list, *it, (GSListFunc) g_slist_append);
+    }
     g_free(spl);
     return list;
 }
@@ -333,7 +335,7 @@ static inline gboolean try_exec(const ObtPaths *const p,
                                 const gchar *const path)
 {
     struct stat st;
-    BSEARCH_SETUP(guint);
+    BSEARCH_SETUP();
 
     if (stat(path, &st) != 0)
         return FALSE;
@@ -357,7 +359,7 @@ gboolean obt_paths_try_exec(ObtPaths *p, const gchar *path)
         GSList *it;
 
         for (it = p->exec_dirs; it; it = g_slist_next(it)) {
-            gchar *f = g_strdup_printf(it->data, G_DIR_SEPARATOR_S, path);
+            gchar *f = g_build_filename(it->data, path, NULL);
             gboolean e = try_exec(p, f);
             g_free(f);
             if (e) return TRUE;

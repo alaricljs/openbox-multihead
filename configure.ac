@@ -1,5 +1,5 @@
 AC_PREREQ([2.54])
-AC_INIT([openbox], [3.5.0], [http://bugzilla.icculus.org])
+AC_INIT([openbox], [3.5.2], [http://bugzilla.icculus.org])
 AC_CONFIG_SRCDIR([openbox/openbox.c])
 
 AM_INIT_AUTOMAKE([foreign])
@@ -20,14 +20,14 @@ dnl if MAJOR or MINOR version changes, be sure to change AC_INIT above to match
 dnl
 RR_MAJOR_VERSION=3
 RR_MINOR_VERSION=5
-RR_MICRO_VERSION=28
+RR_MICRO_VERSION=30
 RR_INTERFACE_AGE=1
 RR_BINARY_AGE=1
 RR_VERSION=$RR_MAJOR_VERSION.$RR_MINOR_VERSION
 
 OBT_MAJOR_VERSION=3
 OBT_MINOR_VERSION=5
-OBT_MICRO_VERSION=1
+OBT_MICRO_VERSION=3
 OBT_INTERFACE_AGE=1
 OBT_BINARY_AGE=1
 OBT_VERSION=$OBT_MAJOR_VERSION.$OBT_MINOR_VERSION
@@ -195,6 +195,36 @@ fi
 
 AM_CONDITIONAL(USE_IMLIB2, [test $imlib2_found = yes])
 
+AC_ARG_ENABLE(librsvg,
+  AC_HELP_STRING(
+    [--disable-librsvg],
+    [disable use of SVG image files for loading icons. [default=enabled]]
+  ),
+  [enable_librsvg=$enableval],
+  [enable_librsvg=yes]
+)
+
+if test "$enable_librsvg" = yes; then
+PKG_CHECK_MODULES(LIBRSVG, [librsvg-2.0],
+  [
+    AC_DEFINE(USE_LIBRSVG, [1], [Use SVG image files])
+    AC_SUBST(LIBRSVG_CFLAGS)
+    AC_SUBST(LIBRSVG_LIBS)
+    # export it for the pkg-config file
+    PKG_CONFIG_LIBRSVG=librsvg-2.0
+    AC_SUBST(PKG_CONFIG_LIBRSVG)
+    librsvg_found=yes
+  ],
+  [
+    librsvg_found=no
+  ]
+)
+else
+  librsvg_found=no
+fi
+
+AM_CONDITIONAL(USE_LIBRSVG, [test $librsvg_found = yes])
+
 dnl Check for session management
 X11_SM
 
@@ -233,6 +263,7 @@ AC_MSG_RESULT([Compiling with these options:
                Startup Notification... $sn_found
                X Cursor Library... $xcursor_found
                Session Management... $SM
-               Imlib2 library... $imlib2_found
+               Imlib2 Library... $imlib2_found
+               SVG Support (librsvg)... $librsvg_found
                ])
 AC_MSG_RESULT([configure complete, now type "make"])

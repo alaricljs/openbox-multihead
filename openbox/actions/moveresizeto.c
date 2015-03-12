@@ -20,6 +20,8 @@ typedef struct {
     gint h;
     gint h_denom;
     gint monitor;
+    gboolean w_sets_client_size;
+    gboolean h_sets_client_size;
 } Options;
 
 static gpointer setup_func(xmlNodePtr node);
@@ -58,12 +60,16 @@ static gpointer setup_func(xmlNodePtr node)
         if (g_ascii_strcasecmp(s, "current") != 0)
             config_parse_relative_number(s, &o->w, &o->w_denom);
         g_free(s);
+
+        obt_xml_attr_bool(n, "client", &o->w_sets_client_size);
     }
     if ((n = obt_xml_find_node(node, "height"))) {
         gchar *s = obt_xml_node_string(n);
         if (g_ascii_strcasecmp(s, "current") != 0)
             config_parse_relative_number(s, &o->h, &o->h_denom);
         g_free(s);
+
+        obt_xml_attr_bool(n, "client", &o->h_sets_client_size);
     }
 
     if ((n = obt_xml_find_node(node, "monitor"))) {
@@ -121,13 +127,32 @@ static gboolean run_func(ObActionsData *data, gpointer options)
         area = screen_area(c->desktop, mon, NULL);
         carea = screen_area(c->desktop, cmon, NULL);
 
+        /* find a target size for the client/frame. */
         w = o->w;
-        if (w == G_MININT) w = c->area.width;
-        else if (o->w_denom) w = (w * area->width) / o->w_denom;
+        if (w == G_MININT) { /* not given, so no-op with current value */
+            if (o->w_sets_client_size)
+                w = c->area.width;
+            else
+                w = c->frame->area.width;
+        }
+        else if (o->w_denom) /* used for eg. "1/3" or "55%" */
+            w = (w * area->width) / o->w_denom;
 
         h = o->h;
-        if (h == G_MININT) h = c->area.height;
-        else if (o->h_denom) h = (h * area->height) / o->h_denom;
+        if (h == G_MININT) {
+            if (o->h_sets_client_size)
+                h = c->area.height;
+            else
+                h = c->frame->area.height;
+        }
+        else if (o->h_denom)
+            h = (h * area->height) / o->h_denom;
+
+        /* get back to the client's size. */
+        if (!o->w_sets_client_size)
+            w -= c->frame->size.left + c->frame->size.right;
+        if (!o->h_sets_client_size)
+            h -= c->frame->size.top + c->frame->size.bottom;
 
         /* it might not be able to resize how they requested, so find out what
            it will actually be resized to */
@@ -139,20 +164,25 @@ static gboolean run_func(ObActionsData *data, gpointer options)
         w += c->frame->size.left + c->frame->size.right;
         h += c->frame->size.top + c->frame->size.bottom;
 
+        /* get the position */
         x = o->x.pos;
-        if (o->x.denom)
+        if (o->x.denom) /* relative positions */
             x = (x * area->width) / o->x.denom;
         if (o->x.center) x = (area->width - w) / 2;
-        else if (x == G_MININT) x = c->frame->area.x - carea->x;
-        else if (o->x.opposite) x = area->width - w - x;
+        else if (x == G_MININT) /* not specified */
+            x = c->frame->area.x - carea->x;
+        else if (o->x.opposite) /* value relative to right edge instead of left */
+            x = area->width - w - x;
         x += area->x;
 
         y = o->y.pos;
         if (o->y.denom)
             y = (y * area->height) / o->y.denom;
         if (o->y.center) y = (area->height - h) / 2;
-        else if (y == G_MININT) y = c->frame->area.y - carea->y;
-        else if (o->y.opposite) y = area->height - h - y;
+        else if (y == G_MININT)
+            y = c->frame->area.y - carea->y;
+        else if (o->y.opposite)
+            y = area->height - h - y;
         y += area->y;
 
         /* get the client's size back */
@@ -165,7 +195,7 @@ static gboolean run_func(ObActionsData *data, gpointer options)
         client_find_onscreen(c, &x, &y, w, h, mon != cmon);
 
         actions_client_move(data, TRUE);
-        client_configure(c, x, y, w, h, TRUE, TRUE, FALSE, FALSE);
+        client_configure(c, x, y, w, h, TRUE, TRUE, FALSE);
         actions_client_move(data, FALSE);
 
         if (mon != cmon)
@@ -188,7 +218,7 @@ static gpointer setup_center_func(xmlNodePtr node)
     o->y.pos = G_MININT;
     o->w = G_MININT;
     o->h = G_MININT;
-    o->monitor = -1;
+    o->monitor = CURRENT_MONITOR;
     o->x.center = TRUE;
     o->y.center = TRUE;
     return o;

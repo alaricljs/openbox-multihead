@@ -28,7 +28,11 @@ typedef struct {
     gboolean desktop_current;
     gboolean desktop_other;
     guint    desktop_number;
+    guint    screendesktop_number;
+    guint    client_monitor;
     GPatternSpec *matchtitle;
+    GRegex *regextitle;
+    gchar  *exacttitle;
     GSList *thenacts;
     GSList *elseacts;
 } Options;
@@ -42,6 +46,21 @@ void action_if_startup(void)
     actions_register("If", setup_func, free_func, run_func);
 }
 
+static inline void set_bool(xmlNodePtr node,
+                            const char *name,
+                            gboolean *on,
+                            gboolean *off)
+{
+    xmlNodePtr n;
+
+    if ((n = obt_xml_find_node(node, name))) {
+        if (obt_xml_node_bool(n))
+            *on = TRUE;
+        else
+            *off = TRUE;
+    }
+}
+
 static gpointer setup_func(xmlNodePtr node)
 {
     xmlNodePtr n;
@@ -49,78 +68,48 @@ static gpointer setup_func(xmlNodePtr node)
 
     o = g_slice_new0(Options);
 
-    if ((n = obt_xml_find_node(node, "shaded"))) {
-        if (obt_xml_node_bool(n))
-            o->shaded_on = TRUE;
-        else
-            o->shaded_off = TRUE;
-    }
-    if ((n = obt_xml_find_node(node, "maximized"))) {
-        if (obt_xml_node_bool(n))
-            o->maxfull_on = TRUE;
-        else
-            o->maxfull_off = TRUE;
-    }
-    if ((n = obt_xml_find_node(node, "maximizedhorizontal"))) {
-        if (obt_xml_node_bool(n))
-            o->maxhorz_on = TRUE;
-        else
-            o->maxhorz_off = TRUE;
-    }
-    if ((n = obt_xml_find_node(node, "maximizedvertical"))) {
-        if (obt_xml_node_bool(n))
-            o->maxvert_on = TRUE;
-        else
-            o->maxvert_off = TRUE;
-    }
-    if ((n = obt_xml_find_node(node, "iconified"))) {
-        if (obt_xml_node_bool(n))
-            o->iconic_on = TRUE;
-        else
-            o->iconic_off = TRUE;
-    }
-    if ((n = obt_xml_find_node(node, "focused"))) {
-        if (obt_xml_node_bool(n))
-            o->focused = TRUE;
-        else
-            o->unfocused = TRUE;
-    }
-    if ((n = obt_xml_find_node(node, "urgent"))) {
-        if (obt_xml_node_bool(n))
-            o->urgent_on = TRUE;
-        else
-            o->urgent_off = TRUE;
-    }
-    if ((n = obt_xml_find_node(node, "undecorated"))) {
-        if (obt_xml_node_bool(n))
-            o->decor_off = TRUE;
-        else
-            o->decor_on = TRUE;
-    }
+    set_bool(node, "shaded", &o->shaded_on, &o->shaded_off);
+    set_bool(node, "maximized", &o->maxfull_on, &o->maxfull_off);
+    set_bool(node, "maximizedhorizontal", &o->maxhorz_on, &o->maxhorz_off);
+    set_bool(node, "maximizedvertical", &o->maxvert_on, &o->maxvert_off);
+    set_bool(node, "iconified", &o->iconic_on, &o->iconic_off);
+    set_bool(node, "focused", &o->focused, &o->unfocused);
+    set_bool(node, "urgent", &o->urgent_on, &o->urgent_off);
+    set_bool(node, "undecorated", &o->decor_off, &o->decor_on);
+    set_bool(node, "omnipresent", &o->omnipresent_on, &o->omnipresent_off);
+
     if ((n = obt_xml_find_node(node, "desktop"))) {
         gchar *s;
         if ((s = obt_xml_node_string(n))) {
-          if (!g_ascii_strcasecmp(s, "current"))
-              o->desktop_current = TRUE;
-          if (!g_ascii_strcasecmp(s, "other"))
-              o->desktop_other = TRUE;
-          else
-              o->desktop_number = atoi(s);
-          g_free(s);
-        }
-    }
-    if ((n = obt_xml_find_node(node, "omnipresent"))) {
-        if (obt_xml_node_bool(n))
-            o->omnipresent_on = TRUE;
-        else
-            o->omnipresent_off = TRUE;
-    }
-    if ((n = obt_xml_find_node(node, "title"))) {
-        gchar *s;
-        if ((s = obt_xml_node_string(n))) {
-            o->matchtitle = g_pattern_spec_new(s);
+            if (!g_ascii_strcasecmp(s, "current"))
+                o->desktop_current = TRUE;
+            if (!g_ascii_strcasecmp(s, "other"))
+                o->desktop_other = TRUE;
+            else
+                o->desktop_number = atoi(s);
             g_free(s);
         }
+    }
+    if ((n = obt_xml_find_node(node, "activedesktop"))) {
+        o->screendesktop_number = obt_xml_node_int(n);
+    }
+    if ((n = obt_xml_find_node(node, "title"))) {
+        gchar *s, *type = NULL;
+        if ((s = obt_xml_node_string(n))) {
+            if (!obt_xml_attr_string(n, "type", &type) ||
+                !g_ascii_strcasecmp(type, "pattern"))
+            {
+                o->matchtitle = g_pattern_spec_new(s);
+            } else if (type && !g_ascii_strcasecmp(type, "regex")) {
+                o->regextitle = g_regex_new(s, 0, 0, NULL);
+            } else if (type && !g_ascii_strcasecmp(type, "exact")) {
+                o->exacttitle = g_strdup(s);
+            }
+            g_free(s);
+        }
+    }
+    if ((n = obt_xml_find_node(node, "monitor"))) {
+        o->client_monitor = obt_xml_node_int(n);
     }
 
     if ((n = obt_xml_find_node(node, "then"))) {
@@ -161,6 +150,10 @@ static void free_func(gpointer options)
     }
     if (o->matchtitle)
         g_pattern_spec_free(o->matchtitle);
+    if (o->regextitle)
+        g_regex_unref(o->regextitle);
+    if (o->exacttitle)
+        g_free(o->exacttitle);
 
     g_slice_free(Options, o);
 }
@@ -197,8 +190,15 @@ static gboolean run_func(ObActionsData *data, gpointer options)
                                  (c->desktop != DESKTOP_ALL))) &&
         (!o->desktop_number  || ((c->desktop == o->desktop_number - 1) ||
                                  (c->desktop == DESKTOP_ALL))) &&
+        (!o->screendesktop_number || screen_desktop == o->screendesktop_number - 1) &&
         (!o->matchtitle ||
-         (g_pattern_match_string(o->matchtitle, c->original_title))))
+         (g_pattern_match_string(o->matchtitle, c->original_title))) &&
+        (!o->regextitle ||
+         (g_regex_match(o->regextitle, c->original_title, 0, NULL))) &&
+        (!o->exacttitle ||
+         (!strcmp(o->exacttitle, c->original_title))) &&
+        (!o->client_monitor ||
+         (o->client_monitor == client_monitor(c) + 1)))
     {
         acts = o->thenacts;
     }

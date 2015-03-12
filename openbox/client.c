@@ -167,6 +167,21 @@ void client_remove_destroy_notify(ObClientCallback func)
     }
 }
 
+void client_remove_destroy_notify_data(ObClientCallback func, gpointer data)
+{
+    GSList *it;
+
+    for (it = client_destroy_notifies; it; it = g_slist_next(it)) {
+        ClientCallback *d = it->data;
+        if (d->func == func && d->data == data) {
+            g_slice_free(ClientCallback, d);
+            client_destroy_notifies =
+                g_slist_delete_link(client_destroy_notifies, it);
+            break;
+        }
+    }
+}
+
 void client_set_list(void)
 {
     Window *windows, *win_it;
@@ -203,6 +218,7 @@ void client_manage(Window window, ObPrompt *prompt)
     Time launch_time;
     guint32 user_time;
     gboolean obplaced;
+    gulong ignore_start;
 
     ob_debug("Managing window: 0x%lx", window);
 
@@ -234,6 +250,8 @@ void client_manage(Window window, ObPrompt *prompt)
     ob_debug("Window group: 0x%x", self->group?self->group->leader:0);
     ob_debug("Window name: %s class: %s role: %s title: %s",
              self->name, self->class, self->role, self->title);
+    ob_debug("Window group name: %s group class: %s",
+             self->group_name, self->group_class);
 
     /* per-app settings override stuff from client_get_all, and return the
        settings for other uses too. the returned settings is a shallow copy,
@@ -352,8 +370,7 @@ void client_manage(Window window, ObPrompt *prompt)
                      "program + user specified" :
                      "BADNESS !?")))), place.width, place.height);
 
-        obplaced = place_client(self, do_activate, &place.x, &place.y,
-                                settings);
+        obplaced = place_client(self, do_activate, &place, settings);
 
         /* watch for buggy apps that ask to be placed at (0,0) when there is
            a strut there */
@@ -482,19 +499,13 @@ void client_manage(Window window, ObPrompt *prompt)
     /* grab mouse bindings before showing the window */
     mouse_grab_for_client(self, TRUE);
 
+    if (!config_focus_under_mouse)
+        ignore_start = event_start_ignore_all_enters();
+
     /* this has to happen before we try focus the window, but we want it to
        happen after the client's stacking has been determined or it looks bad
     */
-    {
-        gulong ignore_start;
-        if (!config_focus_under_mouse)
-            ignore_start = event_start_ignore_all_enters();
-
-        client_show(self);
-
-        if (!config_focus_under_mouse)
-            event_end_ignore_all_enters(ignore_start);
-    }
+    client_show(self);
 
     /* activate/hilight/raise the window */
     if (try_activate) {
@@ -521,6 +532,9 @@ void client_manage(Window window, ObPrompt *prompt)
         if (!client_restore_session_stacking(self))
             stacking_raise(CLIENT_AS_WINDOW(self));
     }
+
+    if (!config_focus_under_mouse)
+        event_end_ignore_all_enters(ignore_start);
 
     /* add to client list/map */
     client_list = g_list_append(client_list, self);
@@ -724,6 +738,8 @@ void client_unmanage(ObClient *self)
     g_free(self->name);
     g_free(self->class);
     g_free(self->role);
+    g_free(self->group_name);
+    g_free(self->group_class);
     g_free(self->client_machine);
     g_free(self->sm_client_id);
     g_slice_free(ObClient, self);
@@ -851,25 +867,21 @@ static gboolean client_can_steal_focus(ObClient *self,
     else if (focus_client) {
         /* If the user is working in another window right now, then don't
            steal focus */
-        /* I think this rule is bogus. There are occasions when I open a
-         * Konsole window, and it doesn't get focus. I wasn't able to figure
-         * out why. - Andrew
-         */
-        /* if (!relative_focused && */
-            /* event_last_user_time && */
+        if (!relative_focused &&
+            event_last_user_time &&
             /* last user time must be strictly > launch_time to block focus */
-            /* (event_time_after(event_last_user_time, launch_time) && */
-             /* event_last_user_time != launch_time) && */
-            /* event_time_after(event_last_user_time, */
-                             /* steal_time - OB_EVENT_USER_TIME_DELAY)) */
-        /* { */
-            /* steal = FALSE; */
-            /* ob_debug("Not focusing the window because the user is " */
-                     /* "working in another window that is not its relative"); */
-        /* } */
+            (event_time_after(event_last_user_time, launch_time) &&
+             event_last_user_time != launch_time) &&
+            event_time_after(event_last_user_time,
+                             steal_time - OB_EVENT_USER_TIME_DELAY))
+        {
+            steal = FALSE;
+            ob_debug("Not focusing the window because the user is "
+                     "working in another window that is not its relative");
+        }
         /* Don't move focus if it's not going to go to this window
            anyway */
-        if (client_focus_target(self) != self) {
+        else if (client_focus_target(self) != self) {
             steal = FALSE;
             ob_debug("Not focusing the window because another window "
                      "would get the focus anyway");
@@ -931,14 +943,24 @@ static ObAppSettings *client_get_settings_state(ObClient *self)
 
         g_assert(app->name != NULL || app->class != NULL ||
                  app->role != NULL || app->title != NULL ||
+                 app->group_name != NULL || app->group_class != NULL ||
                  (signed)app->type >= 0);
 
         if (app->name &&
             !g_pattern_match(app->name, strlen(self->name), self->name, NULL))
             match = FALSE;
+        else if (app->group_name &&
+            !g_pattern_match(app->group_name,
+                             strlen(self->group_name), self->group_name, NULL))
+            match = FALSE;
         else if (app->class &&
                  !g_pattern_match(app->class,
                                   strlen(self->class), self->class, NULL))
+            match = FALSE;
+        else if (app->group_class &&
+                 !g_pattern_match(app->group_class,
+                                  strlen(self->group_class), self->group_class,
+                                  NULL))
             match = FALSE;
         else if (app->role &&
                  !g_pattern_match(app->role,
@@ -1226,12 +1248,14 @@ static void client_get_all(ObClient *self, gboolean real)
        from per-app settings */
     client_get_session_ids(self);
 
-    /* now we got everything that can affect the decorations */
+    /* get this early so we have it for debugging, also this can be used
+     by app rule matching */
+    client_update_title(self);
+
+    /* now we got everything that can affect the decorations or app rule
+       matching */
     if (!real)
         return;
-
-    /* get this early so we have it for debugging */
-    client_update_title(self);
 
     /* save the values of the variables used for app rule matching */
     client_save_app_rule_values(self);
@@ -1336,7 +1360,6 @@ static void client_get_desktop(ObClient *self)
         /* defaults to the current desktop */
         else {
             self->desktop = screen_desktop;
-
             ob_debug("client desktop set to the current desktop: %d",
                      self->desktop);
         }
@@ -2382,6 +2405,25 @@ static void client_get_session_ids(ObClient *self)
     if (self->name == NULL) self->name = g_strdup("");
     if (self->class == NULL) self->class = g_strdup("");
 
+    /* get the WM_CLASS (name and class) from the group leader. make them "" if
+       they are not provided */
+    if (leader)
+        got = OBT_PROP_GETSS_TYPE(leader, WM_CLASS, STRING_NO_CC, &ss);
+    else
+        got = FALSE;
+
+    if (got) {
+        if (ss[0]) {
+            self->group_name = g_strdup(ss[0]);
+            if (ss[1])
+                self->group_class = g_strdup(ss[1]);
+        }
+        g_strfreev(ss);
+    }
+
+    if (self->group_name == NULL) self->group_name = g_strdup("");
+    if (self->group_class == NULL) self->group_class = g_strdup("");
+
     /* get the WM_WINDOW_ROLE. make it "" if it is not provided */
     got = OBT_PROP_GETS_XPCS(self->window, WM_WINDOW_ROLE, &s);
 
@@ -2451,6 +2493,8 @@ static void client_save_app_rule_values(ObClient *self)
     OBT_PROP_SETS(self->window, OB_APP_ROLE, self->role);
     OBT_PROP_SETS(self->window, OB_APP_NAME, self->name);
     OBT_PROP_SETS(self->window, OB_APP_CLASS, self->class);
+    OBT_PROP_SETS(self->window, OB_APP_GROUP_NAME, self->group_name);
+    OBT_PROP_SETS(self->window, OB_APP_GROUP_CLASS, self->group_class);
     OBT_PROP_SETS(self->window, OB_APP_TITLE, self->original_title);
 
     switch (self->type) {
@@ -2741,7 +2785,6 @@ gboolean client_show(ObClient *self)
         */
         client_change_wm_state(self);
     }
-
     return show;
 }
 
@@ -2796,6 +2839,12 @@ gboolean client_helper(ObClient *self)
     return (self->type == OB_CLIENT_TYPE_UTILITY ||
             self->type == OB_CLIENT_TYPE_MENU ||
             self->type == OB_CLIENT_TYPE_TOOLBAR);
+}
+
+gboolean client_occupies_space(ObClient *self)
+{
+    return !(self->type == OB_CLIENT_TYPE_DESKTOP ||
+             self->type == OB_CLIENT_TYPE_SPLASH);
 }
 
 gboolean client_mouse_focusable(ObClient *self)
@@ -3539,7 +3588,6 @@ void client_maximize(ObClient *self, gboolean max, gint dir)
     if (max) {
         /* make sure the window is on some monitor */
         client_find_onscreen(self, &x, &y, w, h, FALSE);
-
     }
 
     client_change_state(self); /* change the state hints on the client */

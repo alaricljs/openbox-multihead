@@ -76,6 +76,7 @@ obrender_libobrender_la_CPPFLAGS = \
 	$(XML_CFLAGS) \
 	$(PANGO_CFLAGS) \
 	$(IMLIB2_CFLAGS) \
+	$(LIBRSVG_CFLAGS) \
 	-DG_LOG_DOMAIN=\"ObRender\" \
 	-DDEFAULT_THEME=\"$(theme)\"
 obrender_libobrender_la_LDFLAGS = \
@@ -86,10 +87,10 @@ obrender_libobrender_la_LIBADD = \
 	$(PANGO_LIBS) \
 	$(GLIB_LIBS) \
 	$(IMLIB2_LIBS) \
+	$(LIBRSVG_LIBS) \
 	$(XML_LIBS)
 obrender_libobrender_la_SOURCES = \
 	gettext.h \
-	obrender/button.h \
 	obrender/button.c \
 	obrender/color.h \
 	obrender/color.c \
@@ -115,6 +116,7 @@ obrender_libobrender_la_SOURCES = \
 ## obt ##
 
 obt_libobt_la_CPPFLAGS = \
+	$(X_CFLAGS) \
 	$(XINERAMA_CFLAGS) \
 	$(XKB_CFLAGS) \
 	$(XRANDR_CFLAGS) \
@@ -129,6 +131,7 @@ obt_libobt_la_CPPFLAGS = \
 obt_libobt_la_LDFLAGS = \
 	-version-info $(OBT_CURRENT):$(OBT_REVISION):$(OBT_AGE)
 obt_libobt_la_LIBADD = \
+	$(X_LIBS) \
 	$(XINERAMA_LIBS) \
 	$(XKB_LIBS) \
 	$(XRANDR_LIBS) \
@@ -288,6 +291,8 @@ openbox_openbox_SOURCES = \
 	openbox/ping.h \
 	openbox/place.c \
 	openbox/place.h \
+	openbox/place_overlap.c \
+	openbox/place_overlap.h \
 	openbox/prompt.c \
 	openbox/prompt.h \
 	openbox/popup.c \

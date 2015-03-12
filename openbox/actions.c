@@ -51,6 +51,7 @@ struct _ObActionsDefinition {
     ObActionsDataFreeFunc free;
     ObActionsRunFunc run;
     ObActionsShutdownFunc shutdown;
+    gboolean modifies_focused_window;
 };
 
 struct _ObActionsAct {
@@ -103,12 +104,13 @@ ObActionsDefinition* do_register(const gchar *name,
             return NULL;
     }
 
-    def = g_slice_new(ObActionsDefinition);
+    def = g_slice_new0(ObActionsDefinition);
     def->ref = 1;
     def->name = g_strdup(name);
     def->free = free;
     def->run = run;
     def->shutdown = NULL;
+    def->modifies_focused_window = TRUE;
 
     registered = g_slist_prepend(registered, def);
     return def;
@@ -150,6 +152,22 @@ gboolean actions_set_shutdown(const gchar *name,
         def = it->data;
         if (!g_ascii_strcasecmp(name, def->name)) {
             def->shutdown = shutdown;
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+gboolean actions_set_modifies_focused_window(const gchar *name,
+                                             gboolean modifies)
+{
+    GSList *it;
+    ObActionsDefinition *def;
+
+    for (it = registered; it; it = g_slist_next(it)) {
+        def = it->data;
+        if (!g_ascii_strcasecmp(name, def->name)) {
+            def->modifies_focused_window = modifies;
             return TRUE;
         }
     }
@@ -340,8 +358,11 @@ void actions_run_acts(GSList *acts,
             if (!act->def->run(&data, act->options)) {
                 if (actions_act_is_interactive(act))
                     actions_interactive_end_act();
-                if (client && client == focus_client)
+                if (client && client == focus_client &&
+                    act->def->modifies_focused_window)
+                {
                     update_user_time = TRUE;
+                }
             } else {
                 /* make sure its interactive if it returned TRUE */
                 g_assert(act->i_input);
@@ -375,7 +396,7 @@ static gboolean actions_interactive_begin_act(ObActionsAct *act, guint state)
         interactive_act = act;
         actions_act_ref(interactive_act);
 
-        interactive_initial_state = obt_keyboard_only_modmasks(state);
+        interactive_initial_state = state;
 
         /* if using focus_delay, stop the timer now so that focus doesn't go
            moving on us, which would kill the action */
@@ -453,7 +474,7 @@ void actions_client_move(ObActionsData *data, gboolean start)
                     ob_debug_type(OB_DEBUG_FOCUS,
                                   "Generating fake leave because we did a "
                                   "mouse-event action");
-                    event_enter_client(data->client);
+                    event_leave_client(data->client);
                 }
             }
         }

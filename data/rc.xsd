@@ -74,7 +74,7 @@
             <xsd:element minOccurs="0" name="policy" type="ob:placementpolicy"/>
             <xsd:element minOccurs="0" name="center" type="ob:bool"/>
             <xsd:element minOccurs="0" name="monitor" type="ob:placementmonitor"/>
-            <xsd:element minOccurs="0" name="monitor" type="ob:primarymonitor"/>
+            <xsd:element minOccurs="0" name="primaryMonitor" type="ob:primarymonitor"/>
             <xsd:element minOccurs="0" name="scaleWindows" type="ob:bool"/>
         </xsd:sequence>
     </xsd:complexType>
@@ -238,11 +238,18 @@
         </xsd:all>
         <xsd:attribute name="force" type="ob:bool"/>
     </xsd:complexType>
+    <xsd:complexType name="window_size">
+        <xsd:all>
+            <xsd:element name="width" type="ob:size_value"/>
+            <xsd:element name="height" type="ob:size_value"/>
+        </xsd:all>
+    </xsd:complexType>
     <xsd:complexType name="application">
         <xsd:all>
             <xsd:element minOccurs="0" name="decor" type="ob:bool"/>
             <xsd:element minOccurs="0" name="shade" type="ob:bool"/>
             <xsd:element minOccurs="0" name="position" type="ob:window_position"/>
+            <xsd:element minOccurs="0" name="size" type="ob:window_size"/>
             <xsd:element minOccurs="0" name="focus" type="xsd:string"/>
             <xsd:element minOccurs="0" name="desktop" type="xsd:integer"/>
             <xsd:element minOccurs="0" name="layer" type="ob:layer"/>
@@ -397,7 +404,8 @@
             <xsd:enumeration value="InactiveWindow"/>
             <xsd:enumeration value="MenuHeader"/>
             <xsd:enumeration value="MenuItem"/>
-            <xsd:enumeration value="OnScreenDisplay"/>
+            <xsd:enumeration value="ActiveOnScreenDisplay"/>
+            <xsd:enumeration value="InactiveOnScreenDisplay"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:simpleType name="fontweight">
@@ -422,7 +430,12 @@
         <xsd:restriction base="xsd:string">
             <!-- ob: atoi($_) unless $_ eq 'center'; -->
             <!-- I think the regexp DTRT WRT atoi. -->
-            <xsd:pattern value="center|-?(0|[1-9][0-9]*)"/>
+            <xsd:pattern value="default|center|-?(0|[1-9][0-9]*)(|%|/[1-9][0-9]*)"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="size_value">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="default|([1-9][0-9]*)(|%|/[1-9][0-9]*)"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:simpleType name="mouse_or_int">
@@ -529,7 +542,7 @@
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="Mouse"/>
             <xsd:enumeration value="Active"/>
-            <xsd:enumeration value="[0-9][0-9][0-9][0-9][0-9]"/>
+            <xsd:pattern value="[0-9][0-9][0-9][0-9][0-9]"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:simpleType name="popupposition">

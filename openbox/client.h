@@ -127,6 +127,10 @@ struct _ObClient
     gchar *class;
     /*! The specified role of the window, used for identification */
     gchar *role;
+    /*! The application that created the window's group. */
+    gchar *group_name;
+    /*! The class of the window's group, can used for grouping */
+    gchar *group_class;
     /*! The session client id for the window. *This can be NULL!* */
     gchar *sm_client_id;
 
@@ -326,6 +330,7 @@ typedef void (*ObClientCallback)(ObClient *client, gpointer data);
 /*! Get notified when the client is unmanaged */
 void client_add_destroy_notify(ObClientCallback func, gpointer data);
 void client_remove_destroy_notify(ObClientCallback func);
+void client_remove_destroy_notify_data(ObClientCallback func, gpointer data);
 
 /*! Manages a given window
   @param prompt This specifies an ObPrompt which is being managed.  It is
@@ -361,6 +366,10 @@ gboolean client_normal(ObClient *self);
 /*! Returns if the window is one of an application's helper windows
   (utilty, menu, etc) */
 gboolean client_helper(ObClient *self);
+
+/*! Returns true if the window occupies space in the monitor conceptually, or
+  false if it does not and its presence should be ignored when possible. */
+gboolean client_occupies_space(ObClient *self);
 
 /*! Return if the client is a type which should be given focus from mouse
   presses on the *client* window. This doesn't affect clicking on the
@@ -495,7 +504,7 @@ void client_fullscreen(ObClient *self, gboolean fs);
 /*! Determine if the window, using the given client-area, would be considered
   as an "oldschool fullscreen" window, that is, if it is filling a whole
   monitor. */
-gboolean client_is_oldfullscreen(const ObClient const *self, const Rect *area);
+gboolean client_is_oldfullscreen(const ObClient *self, const Rect *area);
 
 /*! Iconifies or uniconifies the client window
   @param iconic true if the window should be iconified; false if it should be

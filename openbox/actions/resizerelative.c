@@ -70,24 +70,34 @@ static gboolean run_func(ObActionsData *data, gpointer options)
         gint left = o->left, right = o->right, top = o->top, bottom = o->bottom;
 
         if (o->left_denom)
-            left = (left * c->area.width / c->size_inc.width) / o->left_denom;
+            left = left * c->area.width / o->left_denom;
         if (o->right_denom)
-            right = (right * c->area.width / c->size_inc.width) / o->right_denom;
+            right = right * c->area.width / o->right_denom;
         if (o->top_denom)
-            top = (top * c->area.height / c->size_inc.height) / o->top_denom;
+            top = top * c->area.height / o->top_denom;
         if (o->bottom_denom)
-            bottom = (bottom * c->area.height / c->size_inc.height) / o->bottom_denom;
+            bottom = bottom * c->area.height / o->bottom_denom;
 
+        if (left && ABS(left) < c->size_inc.width)
+            left = left < 0 ? -c->size_inc.width : c->size_inc.width;
+        if (right && ABS(right) < c->size_inc.width)
+            right = right < 0 ? -c->size_inc.width : c->size_inc.width;
+        if (top && ABS(top) < c->size_inc.height)
+            top = top < 0 ? -c->size_inc.height : c->size_inc.height;
+        if (bottom && ABS(bottom) < c->size_inc.height)
+            bottom = bottom < 0 ? -c->size_inc.height : c->size_inc.height;
+
+        /* When resizing, if the resize has a non-zero value then make sure it
+           is at least as big as the size increment so the window does actually
+           resize. */
         x = c->area.x;
         y = c->area.y;
         ow = c->area.width;
-        xoff = -left * c->size_inc.width;
-        nw = ow + right * c->size_inc.width
-            + left * c->size_inc.width;
+        xoff = -left;
+        nw = ow + right + left;
         oh = c->area.height;
-        yoff = -top * c->size_inc.height;
-        nh = oh + bottom * c->size_inc.height
-            + top * c->size_inc.height;
+        yoff = -top;
+        nh = oh + bottom + top;
 
         client_try_configure(c, &x, &y, &nw, &nh, &lw, &lh, TRUE);
         xoff = xoff == 0 ? 0 :

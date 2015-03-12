@@ -48,7 +48,12 @@ struct _ObtXmlInst {
     xmlDocPtr doc;
     xmlNodePtr root;
     gchar *path;
+    gchar *last_error_file;
+    gint last_error_line;
+    gchar *last_error_message;
 };
+
+static void obt_xml_save_last_error(ObtXmlInst* inst);
 
 static void destfunc(struct Callback *c)
 {
@@ -66,6 +71,9 @@ ObtXmlInst* obt_xml_instance_new(void)
     i->doc = NULL;
     i->root = NULL;
     i->path = NULL;
+    i->last_error_file = NULL;
+    i->last_error_line = -1;
+    i->last_error_message = NULL;
     return i;
 }
 
@@ -79,6 +87,8 @@ void obt_xml_instance_unref(ObtXmlInst *i)
     if (i && --i->ref == 0) {
         obt_paths_unref(i->xdg_paths);
         g_hash_table_destroy(i->callbacks);
+        g_free(i->last_error_file);
+        g_free(i->last_error_message);
         g_slice_free(ObtXmlInst, i);
     }
 }
@@ -112,6 +122,11 @@ void obt_xml_register(ObtXmlInst *i, const gchar *tag,
     g_hash_table_insert(i->callbacks, c->tag, c);
 }
 
+void obt_xml_unregister(ObtXmlInst *i, const gchar *tag)
+{
+    g_hash_table_remove(i->callbacks, tag);
+}
+
 static gboolean load_file(ObtXmlInst *i,
                           const gchar *domain,
                           const gchar *filename,
@@ -122,6 +137,8 @@ static gboolean load_file(ObtXmlInst *i,
     gboolean r = FALSE;
 
     g_assert(i->doc == NULL); /* another doc isn't open already? */
+
+    xmlResetLastError();
 
     for (it = paths; !r && it; it = g_slist_next(it)) {
         gchar *path;
@@ -163,6 +180,8 @@ static gboolean load_file(ObtXmlInst *i,
 
         g_free(path);
     }
+
+    obt_xml_save_last_error(i);
 
     return r;
 }
@@ -259,6 +278,8 @@ gboolean obt_xml_load_mem(ObtXmlInst *i,
 
     g_assert(i->doc == NULL); /* another doc isn't open already? */
 
+    xmlResetLastError();
+
     i->doc = xmlParseMemory(data, len);
     if (i) {
         i->root = xmlDocGetRootElement(i->doc);
@@ -277,6 +298,9 @@ gboolean obt_xml_load_mem(ObtXmlInst *i,
         else
             r = TRUE; /* ok ! */
     }
+
+    obt_xml_save_last_error(i);
+
     return r;
 }
 
@@ -316,14 +340,20 @@ void obt_xml_tree_from_root(ObtXmlInst *i)
     obt_xml_tree(i, i->root->children);
 }
 
-gchar *obt_xml_node_string(xmlNodePtr node)
+gchar *obt_xml_node_string_unstripped(xmlNodePtr node)
 {
     xmlChar *c = xmlNodeGetContent(node);
     gchar *s;
-    if (c) g_strstrip((char*)c); /* strip leading/trailing whitespace */
     s = g_strdup(c ? (gchar*)c : "");
     xmlFree(c);
     return s;
+}
+
+gchar *obt_xml_node_string(xmlNodePtr node)
+{
+    gchar* result = obt_xml_node_string_unstripped(node);
+    g_strstrip(result); /* strip leading/trailing whitespace */
+    return result;
 }
 
 gint obt_xml_node_int(xmlNodePtr node)
@@ -408,18 +438,26 @@ gboolean obt_xml_attr_int(xmlNodePtr node, const gchar *name, gint *value)
     return r;
 }
 
-gboolean obt_xml_attr_string(xmlNodePtr node, const gchar *name,
-                             gchar **value)
+gboolean obt_xml_attr_string_unstripped(xmlNodePtr node, const gchar *name,
+                                        gchar **value)
 {
     xmlChar *c = xmlGetProp(node, (const xmlChar*) name);
     gboolean r = FALSE;
     if (c) {
-        g_strstrip((char*)c); /* strip leading/trailing whitespace */
         *value = g_strdup((gchar*)c);
         r = TRUE;
     }
     xmlFree(c);
     return r;
+}
+
+gboolean obt_xml_attr_string(xmlNodePtr node, const gchar *name,
+                             gchar **value)
+{
+    gboolean result = obt_xml_attr_string_unstripped(node, name, value);
+    if (result)
+        g_strstrip(*value); /* strip leading/trailing whitespace */
+    return result;
 }
 
 gboolean obt_xml_attr_contains(xmlNodePtr node, const gchar *name,

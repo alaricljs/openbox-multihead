@@ -51,6 +51,12 @@ gboolean obt_xml_load_theme_file(ObtXmlInst *inst,
 gboolean obt_xml_load_mem(ObtXmlInst *inst,
                           gpointer data, guint len, const gchar *root_node);
 
+/* Returns true if an error is present. */
+gboolean obt_xml_last_error(ObtXmlInst *inst);
+gchar* obt_xml_last_error_file(ObtXmlInst *inst);
+gint obt_xml_last_error_line(ObtXmlInst *inst);
+gchar* obt_xml_last_error_message(ObtXmlInst *inst);
+
 gboolean obt_xml_save_file(ObtXmlInst *inst,
                            const gchar *path,
                            gboolean pretty);
@@ -62,6 +68,7 @@ void obt_xml_close(ObtXmlInst *inst);
 
 void obt_xml_register(ObtXmlInst *inst, const gchar *tag,
                       ObtXmlCallback func, gpointer data);
+void obt_xml_unregister(ObtXmlInst *inst, const gchar *tag);
 void obt_xml_tree(ObtXmlInst *i, xmlNodePtr node);
 void obt_xml_tree_from_root(ObtXmlInst *i);
 
@@ -71,12 +78,15 @@ void obt_xml_tree_from_root(ObtXmlInst *i);
 xmlNodePtr obt_xml_find_node   (xmlNodePtr node, const gchar *name);
 
 gboolean obt_xml_node_contains (xmlNodePtr node, const gchar *val);
+gchar   *obt_xml_node_string_unstripped(xmlNodePtr node);
 gchar   *obt_xml_node_string   (xmlNodePtr node);
 gint     obt_xml_node_int      (xmlNodePtr node);
 gboolean obt_xml_node_bool     (xmlNodePtr node);
 
 gboolean obt_xml_attr_contains (xmlNodePtr node, const gchar *name,
                                 const gchar *val);
+gboolean obt_xml_attr_string_unstripped(xmlNodePtr node, const gchar *name,
+                                        gchar **value);
 gboolean obt_xml_attr_string   (xmlNodePtr node, const gchar *name,
                                 gchar **value);
 gboolean obt_xml_attr_int      (xmlNodePtr node, const gchar *name,

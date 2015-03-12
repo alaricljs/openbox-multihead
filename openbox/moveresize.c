@@ -83,6 +83,8 @@ static void client_dest(ObClient *client, gpointer data)
 {
     if (moveresize_client == client)
         moveresize_end(TRUE);
+    if (popup && client == popup->client)
+        popup->client = NULL;
 }
 
 void moveresize_startup(gboolean reconfig)
@@ -167,6 +169,7 @@ static void popup_coords(ObClient *c, const gchar *format, gint a, gint b)
 
         popup_position(popup, gravity, x, y);
     }
+    popup->client = c;
     popup_show(popup, text);
     g_free(text);
 }
@@ -312,6 +315,7 @@ void moveresize_end(gboolean cancel)
     ungrab_pointer();
 
     popup_hide(popup);
+    popup->client = NULL;
 
     if (!moving) {
 #ifdef SYNC
@@ -592,19 +596,19 @@ static void edge_warp_move_ptr(void)
     a = screen_physical_area_all_monitors();
 
     switch (edge_warp_dir) {
-	case OB_DIRECTION_NORTH:
-	    y = a->height - 1;
-	    break;
-	case OB_DIRECTION_EAST:
-	    x = a->x;
-	    break;
-	case OB_DIRECTION_SOUTH:
-	    y = a->y;
-	    break;
-	case OB_DIRECTION_WEST:
-	    x = a->width - 1;
-	    break;
-	default:
+    case OB_DIRECTION_NORTH:
+        y = a->height - 1;
+        break;
+    case OB_DIRECTION_EAST:
+        x = a->x;
+        break;
+    case OB_DIRECTION_SOUTH:
+        y = a->y;
+        break;
+    case OB_DIRECTION_WEST:
+        x = a->width - 1;
+        break;
+    default:
         g_assert_not_reached();
     }
 
@@ -640,6 +644,10 @@ static void do_edge_warp(gint x, gint y)
 
     for (i = 0; i < screen_num_monitors; ++i) {
         const Rect *a = screen_physical_area_monitor(i);
+
+        if (!RECT_CONTAINS(*a, x, y))
+            continue;
+
         if (x == RECT_LEFT(*a)) dir = OB_DIRECTION_WEST;
         if (x == RECT_RIGHT(*a)) dir = OB_DIRECTION_EAST;
         if (y == RECT_TOP(*a)) dir = OB_DIRECTION_NORTH;

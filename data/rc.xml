@@ -698,10 +698,10 @@
        submenu will not be shown until it is clicked on -->
   <submenuHideDelay>400</submenuHideDelay>
   <!-- time to delay before hiding a submenu when selecting another
-       entry in parent menu -->
+       entry in parent menu
        if this is a negative value, then the delay is infinite and the
        submenu will not be hidden until a different submenu is opened -->
-  <applicationIcons>yes</applicationIcons>
+  <showIcons>yes</showIcons>
   <!-- controls if icons appear in the client-list-(combined-)menu -->
   <manageDesktops>yes</manageDesktops>
   <!-- show the manage desktops section in the client-list-(combined-)menu -->
@@ -716,6 +716,8 @@
 
   <application name="the window's _OB_APP_NAME property (see obxprop)"
               class="the window's _OB_APP_CLASS property (see obxprop)"
+          groupname="the window's _OB_APP_GROUP_NAME property (see obxprop)"
+         groupclass="the window's _OB_APP_GROUP_CLASS property (see obxprop)"
                role="the window's _OB_APP_ROLE property (see obxprop)"
               title="the window's _OB_APP_TITLE property (see obxprop)"
                type="the window's _OB_APP_TYPE property (see obxprob)..
@@ -751,13 +753,24 @@
       # applications who refuse to behave
       <x>center</x>
       # a number like 50, or 'center' to center on screen. use a negative number
-      # to start from the right (or bottom for <y>), ie -50 is 50 pixels from the
-      # right edge (or bottom).
+      # to start from the right (or bottom for <y>), ie -50 is 50 pixels from
+      # the right edge (or bottom). use 'default' to specify using value
+      # provided by the application, or chosen by openbox, instead.
       <y>200</y>
       <monitor>1</monitor>
       # specifies the monitor in a xinerama setup.
       # 1 is the first head, or 'mouse' for wherever the mouse is
     </position>
+
+    <size>
+      # the size to make the window.
+      <width>20</width>
+      # a number like 20, or 'default' to use the size given by the application.
+      # you can use fractions such as 1/2 or percentages such as 75% in which
+      # case the value is relative to the size of the monitor that the window
+      # appears on.
+      <height>30%</height>
+    </size>
 
     <focus>yes</focus>
     # if the window should try be given focus when it appears. if this is set

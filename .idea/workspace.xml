@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true">
+    <generated>
+      <config projectName="openbox_multihead" targetName="openbox_multihead" />
+    </generated>
+  </component>
+  <component name="CMakeSettings" AUTO_RELOAD="false" GENERATION_PASS_SYSTEM_ENVIRONMENT="true">
+    <ADDITIONAL_GENERATION_ENVIRONMENT>
+      <envs />
+    </ADDITIONAL_GENERATION_ENVIRONMENT>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a1bf07ee-54ed-460a-bb6d-679ea5e4ec49" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/obrender/button.h" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CHANGELOG" afterPath="$PROJECT_DIR$/CHANGELOG" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/po/LINGUAS" afterPath="$PROJECT_DIR$/po/LINGUAS" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Makefile.am" afterPath="$PROJECT_DIR$/Makefile.am" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.GIT" afterPath="$PROJECT_DIR$/README.GIT" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README" afterPath="$PROJECT_DIR$/README" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/actions.c" afterPath="$PROJECT_DIR$/openbox/actions.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/actions.h" afterPath="$PROJECT_DIR$/openbox/actions.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/po/ar.po" afterPath="$PROJECT_DIR$/po/ar.po" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bootstrap" afterPath="$PROJECT_DIR$/bootstrap" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/obt/bsearch.h" afterPath="$PROJECT_DIR$/obt/bsearch.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/obrender/button.c" afterPath="$PROJECT_DIR$/obrender/button.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/client.c" afterPath="$PROJECT_DIR$/openbox/client.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/client.h" afterPath="$PROJECT_DIR$/openbox/client.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/config.c" afterPath="$PROJECT_DIR$/openbox/config.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/config.h" afterPath="$PROJECT_DIR$/openbox/config.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/configure.ac" afterPath="$PROJECT_DIR$/configure.ac" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/actions/cyclewindows.c" afterPath="$PROJECT_DIR$/openbox/actions/cyclewindows.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/actions/desktop.c" afterPath="$PROJECT_DIR$/openbox/actions/desktop.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/actions/directionalwindows.c" afterPath="$PROJECT_DIR$/openbox/actions/directionalwindows.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/dock.c" afterPath="$PROJECT_DIR$/openbox/dock.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/po/en@boldquot.po" afterPath="$PROJECT_DIR$/po/en@boldquot.po" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/event.c" afterPath="$PROJECT_DIR$/openbox/event.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/event.h" afterPath="$PROJECT_DIR$/openbox/event.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/actions/execute.c" afterPath="$PROJECT_DIR$/openbox/actions/execute.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/focus_cycle.c" afterPath="$PROJECT_DIR$/openbox/focus_cycle.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/focus_cycle.h" afterPath="$PROJECT_DIR$/openbox/focus_cycle.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/frame.c" afterPath="$PROJECT_DIR$/openbox/frame.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/geom.h" afterPath="$PROJECT_DIR$/openbox/geom.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/obrender/gradient.c" afterPath="$PROJECT_DIR$/obrender/gradient.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/actions/if.c" afterPath="$PROJECT_DIR$/openbox/actions/if.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/obrender/image.c" afterPath="$PROJECT_DIR$/obrender/image.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/obt/keyboard.c" afterPath="$PROJECT_DIR$/obt/keyboard.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/obt/keyboard.h" afterPath="$PROJECT_DIR$/obt/keyboard.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/obt/link.h" afterPath="$PROJECT_DIR$/obt/link.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/menu.c" afterPath="$PROJECT_DIR$/openbox/menu.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/menu.h" afterPath="$PROJECT_DIR$/openbox/menu.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/menuframe.c" afterPath="$PROJECT_DIR$/openbox/menuframe.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/menuframe.h" afterPath="$PROJECT_DIR$/openbox/menuframe.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/actions/moverelative.c" afterPath="$PROJECT_DIR$/openbox/actions/moverelative.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/moveresize.c" afterPath="$PROJECT_DIR$/openbox/moveresize.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/actions/moveresizeto.c" afterPath="$PROJECT_DIR$/openbox/actions/moveresizeto.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/obrender/obrender-3.5.pc.in" afterPath="$PROJECT_DIR$/obrender/obrender-3.5.pc.in" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/autostart/openbox-autostart.in" afterPath="$PROJECT_DIR$/data/autostart/openbox-autostart.in" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/autostart/openbox-xdg-autostart" afterPath="$PROJECT_DIR$/data/autostart/openbox-xdg-autostart" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/openbox.1.in" afterPath="$PROJECT_DIR$/doc/openbox.1.in" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/openbox.1.sgml" afterPath="$PROJECT_DIR$/doc/openbox.1.sgml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/openbox.c" afterPath="$PROJECT_DIR$/openbox/openbox.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/obt/paths.c" afterPath="$PROJECT_DIR$/obt/paths.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/place.c" afterPath="$PROJECT_DIR$/openbox/place.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/place.h" afterPath="$PROJECT_DIR$/openbox/place.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/popup.c" afterPath="$PROJECT_DIR$/openbox/popup.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/popup.h" afterPath="$PROJECT_DIR$/openbox/popup.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/prompt.c" afterPath="$PROJECT_DIR$/openbox/prompt.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/obt/prop.c" afterPath="$PROJECT_DIR$/obt/prop.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/obt/prop.h" afterPath="$PROJECT_DIR$/obt/prop.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/rc.xml" afterPath="$PROJECT_DIR$/data/rc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/rc.xsd" afterPath="$PROJECT_DIR$/data/rc.xsd" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/obrender/render.h" afterPath="$PROJECT_DIR$/obrender/render.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/actions/resizerelative.c" afterPath="$PROJECT_DIR$/openbox/actions/resizerelative.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openbox/screen.c" afterPath="$PROJECT_DIR$/openbox/screen.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/obrender/theme.c" afterPath="$PROJECT_DIR$/obrender/theme.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/obt/xml.c" afterPath="$PROJECT_DIR$/obt/xml.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/obt/xml.h" afterPath="$PROJECT_DIR$/obt/xml.h" />
+    </list>
+    <ignored path="openbox-multihead.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="openbox-multihead" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="NamedScopeManager">
+    <order />
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="185" />
+    <option name="y" value="90" />
+    <option name="width" value="1735" />
+    <option name="height" value="1000" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="openbox-multihead" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$1$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="openbox-multihead" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$1$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="openbox-multihead" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="recentsLimit" value="5" />
+    <property name="FullScreen" value="false" />
+  </component>
+  <component name="RunManager" selected="Application.openbox_multihead">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS="FALSE" PROJECT_NAME="openbox_multihead" TARGET_NAME="openbox_multihead" CONFIG_NAME="Debug">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="openbox_multihead" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS="FALSE" PROJECT_NAME="openbox_multihead" TARGET_NAME="openbox_multihead" CONFIG_NAME="Debug">
+      <envs />
+      <method />
+    </configuration>
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="Application.openbox_multihead" />
+    </list>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a1bf07ee-54ed-460a-bb6d-679ea5e4ec49" name="Default" comment="" />
+      <created>1426175594082</created>
+      <option name="number" value="Default" />
+      <updated>1426175594082</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="185" y="90" width="1735" height="1000" extended-state="0" />
+    <editor active="false" />
+    <layout>
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24956572" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32890365" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="myTodoPanelSettings">
+      <TodoPanelSettings />
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.03207331">
+          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
