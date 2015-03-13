@@ -510,7 +510,7 @@ data/autostart/openbox-autostart: $(top_srcdir)/data/autostart/openbox-autostart
 
 %.1.in: %.1.sgml
 	@echo make: creating $@
-	@docbook-to-man $< >$@
+	@docbook2man $< >$@
 
 %.1: %.1.in Makefile
 	@echo make: creating $@
