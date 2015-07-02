@@ -24,6 +24,8 @@ source=($pkgname::git+https://github.com/alaricljs/openbox-multihead.git
        )
 md5sums=('SKIP'
         )
+conflicts=('openbox' 'openbox-git' 'openbox-multihead-git')
+provides=('openbox' 'openbox-git' 'openbox-multihead-git' 'libobrender.so')
 
 build() {
   cd $pkgname
